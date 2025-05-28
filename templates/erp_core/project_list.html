@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Projects - ERP System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0 text-white">
+            <i class="fas fa-project-diagram text-primary me-2"></i> Projects
+        </h2>
+        <a href="{% url 'erp_core:project_create' %}" class="btn btn-primary btn-lg rounded-pill">
+            <i class="fas fa-plus me-2"></i> Create Project
+        </a>
+    </div>
+
+    <div class="row">
+        {% if projects %}
+            {% for project in projects %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 project-card border-0 shadow-lg hover-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title mb-0">
+                                    <a href="{% url 'erp_core:project_detail' project.pk %}" class="text-decoration-none text-white">
+                                        {{ project.name }}
+                                    </a>
+                                </h5>
+                                <span class="badge bg-{{ project.get_status_color }} rounded-pill px-3">{{ project.status }}</span>
+                            </div>
+                            <p class="card-text text-light mb-3">{{ project.description|truncatechars:100 }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-light">
+                                    <i class="fas fa-calendar text-white"></i> {{ project.start_date|date:"M d, Y" }}
+                                </small>
+                                <div>
+                                    <span class="badge bg-info rounded-pill me-2">
+                                        <i class="fas fa-users me-1"></i> {{ project.team_members.count }}
+                                    </span>
+                                    <span class="badge bg-warning rounded-pill">
+                                        <i class="fas fa-tasks me-1"></i> {{ project.tasks.count }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer border-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-light">
+                                    <i class="fas fa-user text-white me-1"></i> {{ project.manager }}
+                                </small>
+                                <a href="{% url 'erp_core:project_detail' project.pk %}" class="btn btn-light btn-sm rounded-pill px-3">
+                                    View Details <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-project-diagram text-primary fa-4x mb-3"></i>
+                    <h5 class="text-white">No projects found</h5>
+                    <p class="text-light mb-4">Create your first project to get started</p>
+                    <a href="{% url 'erp_core:project_create' %}" class="btn btn-primary btn-lg rounded-pill">
+                        <i class="fas fa-plus me-2"></i> Create Project
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .project-card {
+        background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+        transition: all 0.3s ease;
+    }
+    
+    .project-card:nth-child(3n+1) {
+        background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+    }
+    
+    .project-card:nth-child(3n+2) {
+        background: linear-gradient(135deg, #004d40 0%, #00695c 100%);
+    }
+    
+    .project-card:nth-child(3n+3) {
+        background: linear-gradient(135deg, #311b92 0%, #4527a0 100%);
+    }
+    
+    .hover-card {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .btn-primary {
+        background: linear-gradient(45deg, #4f46e5, #6366f1);
+        border: none;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-light {
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-light:hover {
+        background: white;
+        transform: translateY(-2px);
+    }
+
+    .badge {
+        font-weight: 500;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-footer {
+        background: rgba(0, 0, 0, 0.1);
+    }
+</style>
+{% endblock %} 

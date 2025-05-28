@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tasks - ERP System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0 text-white">
+            <i class="fas fa-tasks text-success me-2"></i>Tasks
+        </h2>
+        <a href="{% url 'erp_core:task_create' %}" class="btn btn-warning btn-success btn-lg rounded-pill px-3 shadow-sm">
+            <i class="fas fa-plus me-2"></i>Create Task
+        </a>
+    </div>
+
+    {% if tasks %}
+    <div class="row">
+        {% for task in tasks %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card task-card h-100 border-0 shadow-lg hover-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title mb-0 text-white">
+                            <a href="{% url 'erp_core:task_detail' task.id %}" class="text-decoration-none text-white">
+                                {{ task.title }}
+                            </a>
+                        </h5>
+                        <span class="badge bg-{{ task.get_priority_color }} rounded-pill px-3">
+                            {{ task.priority|title }}
+                        </span>
+                    </div>
+                    <p class="card-text text-light mb-3">{{ task.description|truncatewords:20 }}</p>
+                    <div class="task-info">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-light">
+                                <i class="fas fa-project-diagram me-1"></i> {{ task.project.name }}
+                            </small>
+                            <span class="badge bg-{{ task.status|lower }} rounded-pill px-3">
+                                {{ task.get_status_display }}
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-light">
+                                <i class="fas fa-calendar-alt me-1"></i> Due: {{ task.due_date|date:"M d, Y" }}
+                            </small>
+                            <a href="{% url 'erp_core:task_detail' task.id %}" class="btn btn-light btn-sm rounded-pill px-3">
+                                <i class="fas fa-eye me-1"></i>View
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center my-5">
+        <i class="fas fa-clipboard-list fa-4x text-success mb-3"></i>
+        <h3 class="text-white">No tasks found</h3>
+        <p class="text-white-50">Create your first task to get started</p>
+        <a href="{% url 'erp_core:task_create' %}" class="btn btn-success btn-lg rounded-pill px-4">
+            <i class="fas fa-plus me-2"></i>Create First Task
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .task-card {
+        background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+        transition: all 0.3s ease;
+    }
+    
+    .task-card:nth-child(3n+1) {
+        background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+    }
+    
+    .task-card:nth-child(3n+2) {
+        background: linear-gradient(45deg, #eab308, #fbbf24) !important;
+    }
+    
+    .task-card:nth-child(3n+3) {
+        background: linear-gradient(135deg, #311b92 0%, #4527a0 100%);
+    }
+    
+    .hover-card {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .btn-primary {
+        background: linear-gradient(45deg, #4f46e5, #6366f1);
+        border: none;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-light {
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-light:hover {
+        background: white;
+        transform: translateY(-2px);
+    }
+
+    .badge {
+        font-weight: 500;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .task-info {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .btn-warning {
+        background: linear-gradient(45deg, #eab308, #fbbf24) !important;
+        border: none !important;
+        transition: all 0.3s ease !important;
+        color: #1e293b !important;
+    }
+</style>
+{% endblock %} 

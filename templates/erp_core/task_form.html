@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Create Task{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-gradient py-3" style="background: linear-gradient(135deg, var(--success) 0%, #047857 100%);">
+                    <h5 class="card-title mb-0 text-white">
+                        <i class="fas fa-tasks me-2"></i>Create New Task
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-2"></i>Create Task
+                            </button>
+                            <a href="{% if request.GET.project %}{% url 'erp_core:project_detail' request.GET.project %}{% else %}{% url 'erp_core:task_list' %}{% endif %}" 
+                               class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .select2-container {
+        width: 100% !important;
+    }
+    
+    .form-control, .select2-selection {
+        background-color: var(--bg-card) !important;
+        border: 1px solid var(--border) !important;
+        color: var(--text-primary) !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .form-control:focus, .select2-container--focus .select2-selection {
+        border-color: var(--success) !important;
+        box-shadow: 0 0 0 0.2rem rgba(5, 150, 105, 0.25) !important;
+    }
+    
+    .select2-container--default .select2-selection--single {
+        background-color: var(--bg-card) !important;
+        border: 1px solid var(--border) !important;
+        height: 38px !important;
+        padding: 5px !important;
+    }
+    
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: var(--text-primary) !important;
+        line-height: 28px !important;
+    }
+    
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 36px !important;
+    }
+    
+    .select2-dropdown {
+        background-color: var(--bg-card) !important;
+        border: 1px solid var(--border) !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .select2-container--default .select2-results__option {
+        color: var(--text-primary) !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+        background: linear-gradient(135deg, var(--success) 0%, #047857 100%) !important;
+        color: white !important;
+    }
+    
+    .form-label {
+        color: var(--text-primary) !important;
+        font-weight: 500 !important;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .form-control, .select2-selection {
+            background-color: rgba(30, 41, 59, 0.8) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            color: var(--text-light) !important;
+        }
+        
+        .select2-container--default .select2-selection--single {
+            background-color: rgba(30, 41, 59, 0.8) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: var(--text-light) !important;
+        }
+        
+        .select2-dropdown {
+            background-color: rgba(30, 41, 59, 0.95) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(10px) !important;
+        }
+        
+        .select2-container--default .select2-results__option {
+            color: var(--text-light) !important;
+        }
+        
+        .form-label {
+            color: var(--text-light) !important;
+        }
+    }
+</style>
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Initialize Select2 for project field with improved styling
+        $('#id_project').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Select a project',
+            width: '100%',
+            dropdownParent: $('#id_project').closest('.card-body')
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %} 

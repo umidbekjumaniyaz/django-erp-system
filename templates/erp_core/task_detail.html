@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ task.title }} - ERP System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-tasks text-success"></i> {{ task.title }}
+                    </h5>
+                    <small class="text-muted">
+                        Project: <a href="{% url 'erp_core:project_detail' task.project.pk %}" class="text-decoration-none">
+                            {{ task.project.name }}
+                        </a>
+                    </small>
+                </div>
+                <div>
+                    <span class="badge bg-{{ task.get_priority_color }} me-2">{{ task.priority }}</span>
+                    <span class="badge bg-info">{{ task.status }}</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h6 class="text-muted mb-3">Task Description</h6>
+                        <p class="mb-4">{{ task.description }}</p>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h6 class="text-muted">Due Date</h6>
+                                <p>{{ task.due_date|date:"M d, Y" }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-muted">Assigned To</h6>
+                                <p>{{ task.assigned_to }}</p>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-muted">Created At</h6>
+                                <p>{{ task.created_at|date:"M d, Y H:i" }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-muted">Last Updated</h6>
+                                <p>{{ task.updated_at|date:"M d, Y H:i" }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="card-title mb-0">
+                                    <i class="fas fa-info-circle"></i> Task Status
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span>Priority</span>
+                                    <span class="badge bg-{{ task.get_priority_color }}">{{ task.priority }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span>Status</span>
+                                    <span class="badge bg-info">{{ task.status }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>Days Until Due</span>
+                                    {% with days_until=task.due_date|timeuntil %}
+                                        <span class="badge {% if days_until < '1 day' %}bg-danger{% else %}bg-success{% endif %}">
+                                            {{ days_until }}
+                                        </span>
+                                    {% endwith %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
