@@ -6,7 +6,6 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./app:/code
+      - .:/app
     environment:
-      DJANGO_SECRET_KEY: your-secret-key
-      DJANGO_DEBUG: "True"
+      DJANGO_SETTINGS_MODULE: config.settings
