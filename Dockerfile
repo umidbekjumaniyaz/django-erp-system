@@ -1,17 +1,18 @@
+# Python bazasidan boshlaymiz
 FROM python:3.11-slim
 
-# Django muhit sozlamalari
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
+# Ishchi katalog yaratamiz
 WORKDIR /app
 
-# Kutubxonalarni o‘rnatish
+# Talablar faylini ko‘chiramiz va o‘rnatamiz
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Loyihani konteynerga ko‘chirish
+# Loyihani konteynerga ko‘chiramiz
 COPY . .
 
-# Gunicorn orqali ishga tushurish
+# Port ochamiz
+EXPOSE 8000
+
+# Gunicorn orqali loyihani ishga tushiramiz
 CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000"]
