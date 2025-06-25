@@ -245,6 +245,24 @@ def profile(request):
     return render(request, 'erp_core/profile.html', {'employee': employee})
 
 def login_view(request):
+    # Check if database is properly initialized
+    from django.db import connection
+    from django.core.management import call_command
+    
+    try:
+        # Try to access the User model to check if tables exist
+        from django.contrib.auth.models import User
+        User.objects.exists()
+    except Exception as e:
+        # If database tables don't exist, run migrations
+        print(f"Database error detected: {e}")
+        print("Running migrations...")
+        try:
+            call_command('migrate', verbosity=2)
+            call_command('init_app')
+        except Exception as migration_error:
+            print(f"Migration error: {migration_error}")
+    
     if request.user.is_authenticated:
         return redirect('erp_core:dashboard')
     

@@ -2,57 +2,26 @@
 # exit on error
 set -o errexit
 
+echo "=== Starting build process ==="
+
 echo "Installing Python dependencies..."
 pip install -r requirements.txt
 
-echo "Collecting static files..."
-python manage.py collectstatic --no-input --clear
+echo "=== Running Django management commands ==="
+
+echo "Making migrations..."
+python manage.py makemigrations --verbosity=2
 
 echo "Running database migrations..."
-python manage.py migrate
+python manage.py migrate --verbosity=2
 
-echo "Creating superuser..."
-python -c "
-import os
-import django
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
-django.setup()
+echo "Collecting static files..."
+python manage.py collectstatic --no-input --clear --verbosity=2
 
-from django.contrib.auth.models import User
-from erp_core.models import Employee
-from django.utils import timezone
+echo "=== Creating superuser and employee profile ==="
+python manage.py init_app
 
-# Create superuser if it doesn't exist
-if not User.objects.filter(username='admin').exists():
-    user = User.objects.create_superuser(
-        username='admin',
-        email='admin@example.com',
-        password='admin123'
-    )
-    print('Superuser created successfully!')
-    
-    # Create employee profile for superuser
-    if not hasattr(user, 'employee'):
-        Employee.objects.create(
-            user=user,
-            department='Administration',
-            position='Admin',
-            phone='N/A',
-            hire_date=timezone.now().date()
-        )
-        print('Employee profile created for superuser!')
-else:
-    print('Superuser already exists.')
-    user = User.objects.get(username='admin')
-    if not hasattr(user, 'employee'):
-        Employee.objects.create(
-            user=user,
-            department='Administration',
-            position='Admin',
-            phone='N/A',
-            hire_date=timezone.now().date()
-        )
-        print('Employee profile created for existing superuser!')
-"
+echo "=== Checking database status ==="
+python manage.py showmigrations --verbosity=2
 
-echo "Build completed successfully!"
+echo "=== Build completed successfully! ==="
