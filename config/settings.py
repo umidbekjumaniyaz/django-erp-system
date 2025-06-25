@@ -28,11 +28,29 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-change-this-in-produc
 DEBUG = bool(int(os.environ.get('DEBUG', 0)))
 
 # ALLOWED_HOSTS configuration
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1 localhost').split()
+# For production, we need to be explicit about allowed hosts
+if DEBUG:
+    # Development
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+else:
+    # Production - be very explicit
+    ALLOWED_HOSTS = [
+        'django-erp-system.onrender.com',
+        '127.0.0.1',
+        'localhost',
+    ]
 
-# Add Render.com domain if not in environment variable
-if 'django-erp-system.onrender.com' not in ALLOWED_HOSTS:
-    ALLOWED_HOSTS.extend(['django-erp-system.onrender.com', '*.onrender.com'])
+# Allow override via environment variable
+if os.environ.get('DJANGO_ALLOWED_HOSTS'):
+    env_hosts = os.environ.get('DJANGO_ALLOWED_HOSTS').split()
+    # Merge with existing hosts
+    all_hosts = ALLOWED_HOSTS + env_hosts
+    ALLOWED_HOSTS = list(dict.fromkeys(all_hosts))  # Remove duplicates
+
+# Debug: Print allowed hosts
+print(f"Django starting with ALLOWED_HOSTS: {ALLOWED_HOSTS}")
+print(f"DEBUG mode: {DEBUG}")
+print(f"Environment DJANGO_ALLOWED_HOSTS: {os.environ.get('DJANGO_ALLOWED_HOSTS', 'Not set')}")
 
 
 # Application definition
