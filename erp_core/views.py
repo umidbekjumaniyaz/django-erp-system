@@ -107,13 +107,17 @@ def order_detail(request, pk):
 
 def create_employee(request):
     if request.user.is_authenticated and not hasattr(request.user, 'employee'):
-        Employee.objects.create(
-            user=request.user,
-            department='Administration',
-            position='Admin',
-            phone='N/A',
-            hire_date=timezone.now().date()
-        )
+        try:
+            Employee.objects.create(
+                user=request.user,
+                department='Administration',
+                position='Admin',
+                phone='N/A',
+                hire_date=timezone.now().date()
+            )
+            messages.success(request, 'Employee profile created successfully!')
+        except Exception as e:
+            messages.error(request, f'Error creating employee profile: {str(e)}')
     return redirect('erp_core:dashboard')
 
 @login_required
@@ -241,14 +245,26 @@ def profile(request):
     return render(request, 'erp_core/profile.html', {'employee': employee})
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('erp_core:dashboard')
+    
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
+            # Create employee profile if doesn't exist
             if not hasattr(user, 'employee'):
-                return redirect('erp_core:create_employee')
+                Employee.objects.create(
+                    user=user,
+                    department='Administration',
+                    position='Admin',
+                    phone='N/A',
+                    hire_date=timezone.now().date()
+                )
             return redirect('erp_core:dashboard')
+        else:
+            messages.error(request, 'Invalid username or password.')
     else:
         form = AuthenticationForm()
     return render(request, 'erp_core/login.html', {'form': form})
@@ -260,8 +276,23 @@ def logout_view(request):
 
 @login_required
 def retail_dashboard(request):
+    # Ensure user has employee profile
+    if not hasattr(request.user, 'employee'):
+        try:
+            Employee.objects.create(
+                user=request.user,
+                department='Administration',
+                position='Admin',
+                phone='N/A',
+                hire_date=timezone.now().date()
+            )
+        except Exception as e:
+            messages.error(request, f'Error creating employee profile: {str(e)}')
+            return redirect('erp_core:login')
+    
     # Sample data for retail dashboard
     context = {
+        'user': request.user,
         'daily_sales': 24750,
         'weekly_sales': 168400,
         'monthly_sales': 720500,
