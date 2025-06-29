@@ -36,6 +36,7 @@ else:
     # Production - be very explicit
     ALLOWED_HOSTS = [
         'django-erp-system.onrender.com',
+        'django-erp-system-lz22.onrender.com',
         '127.0.0.1',
         'localhost',
     ]
