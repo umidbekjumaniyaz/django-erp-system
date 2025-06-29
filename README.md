@@ -84,3 +84,4 @@ docker run -p 8000:8000 erp-system
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details. # django-erp-system
+# django-erp-system
