@@ -11,35 +11,16 @@ Render.com - bu zamonaviy cloud platformasi bo'lib, web ilovalarni oson va tez d
 
 ## Qadam-ba-qadam Deploy Qilish
 
-### 1. GitHub Repository Yaratish
+### 1. GitHub Repository Tayyorlash
 
-#### GitHub-da yangi repository yarating:
-1. GitHub.com-ga kiring
-2. "+" tugmasini bosing va "New repository" tanlang
-3. Repository nomi: `django-erp-system` (yoki boshqa nom)
-4. Public yoki Private tanlang
-5. "Create repository" tugmasini bosing
+Loyiha allaqachon GitHub-da mavjud: https://github.com/umidbekjumaniyaz/django-erp-system.git
 
-#### Loyihani GitHub-ga yuklash:
+Agar yangilanishlar bo'lsa:
 ```bash
-# Loyiha papkasiga o'ting
-cd /Users/umidbek/Downloads/django-erp-system-main
-
-# Git initialize qiling (agar qilinmagan bo'lsa)
-git init
-
-# Barcha fayllarni add qiling
+# O'zgarishlarni push qiling
 git add .
-
-# Commit qiling
-git commit -m "Initial commit: Django ERP System"
-
-# GitHub repository-ni remote sifatida qo'shing (URL-ni o'zingizniki bilan almashtiring)
-git remote add origin https://github.com/YOUR_USERNAME/django-erp-system.git
-
-# Main branch-ga push qiling
-git branch -M main
-git push -u origin main
+git commit -m "Updated for Render deployment"
+git push origin main
 ```
 
 ### 2. Render.com-da Web Service Yaratish
@@ -56,7 +37,7 @@ git push -u origin main
 Quyidagi sozlamalarni kiriting:
 
 #### Asosiy Sozlamalar:
-- **Name**: `django-erp-system` (yoki boshqa nom)
+- **Name**: `django-erp-system`
 - **Region**: `Oregon (US West)` yoki yaqin region
 - **Branch**: `main`
 - **Runtime**: `Python 3`
@@ -76,7 +57,6 @@ Quyidagi sozlamalarni kiriting:
 SECRET_KEY = django-insecure-your-secret-key-here-make-it-very-long-and-random
 DEBUG = False
 DJANGO_ALLOWED_HOSTS = your-app-name.onrender.com
-DATABASE_URL = postgres://user:password@host:port/database
 ```
 
 #### SECRET_KEY yaratish:
@@ -128,21 +108,9 @@ Collecting static files...
 ### 8. Aplikatsiyani Ochish
 
 Deploy tugagandan keyin:
-1. Service URL-i ko'rsatiladi (masalan: `https://django-erp-system.onrender.com`)
-2. Link-ni bosing yoki yangi tab-da oching
-3. Django ERP tizimi ishga tushgan bo'ladi!
-
-## Muhim Eslatmalar
-
-### Bepul Plan Cheklovlari:
-- **Sleep Mode**: 15 daqiqa faoliyatsizlikdan keyin dastur "uyquga" ketadi
-- **Cold Start**: Birinchi so'rov 30-60 soniya davom etishi mumkin
-- **750 soat/oy**: Bepul plan uchun cheklangan
-
-### Xavfsizlik:
-- **SECRET_KEY**: Hech qachon kodga yozmang
-- **DEBUG**: Production-da har doim `False` bo'lishi kerak
-- **ALLOWED_HOSTS**: Faqat kerakli domainlarni qo'shing
+- Service URL-i ko'rsatiladi (masalan: `https://django-erp-system.onrender.com`)
+- Link-ni bosing yoki yangi tab-da oching
+- Django ERP tizimi ishga tushgan bo'ladi!
 
 ## Keyingi Deploy-lar
 
@@ -176,6 +144,18 @@ DJANGO_ALLOWED_HOSTS = your-app-name.onrender.com,localhost,127.0.0.1
 
 **Database error**:
 - PostgreSQL database yarating va `DATABASE_URL` qo'shing
+
+## Muhim Eslatmalar
+
+### Bepul Plan Cheklovlari:
+- **Sleep Mode**: 15 daqiqa faoliyatsizlikdan keyin dastur "uyquga" ketadi
+- **Cold Start**: Birinchi so'rov 30-60 soniya davom etishi mumkin
+- **750 soat/oy**: Bepul plan uchun cheklangan
+
+### Xavfsizlik:
+- **SECRET_KEY**: Hech qachon kodga yozmang
+- **DEBUG**: Production-da har doim `False` bo'lishi kerak
+- **ALLOWED_HOSTS**: Faqat kerakli domainlarni qo'shing
 
 ## Custom Domain (Ixtiyoriy)
 

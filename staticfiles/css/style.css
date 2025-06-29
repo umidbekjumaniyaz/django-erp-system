@@ -1,0 +1,65 @@
+/* Custom styles */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,.05);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,.1);
+    transform: translateY(-2px);
+}
+
+.list-group-item {
+    transition: background-color 0.2s ease;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+.btn {
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+.footer {
+    box-shadow: 0 -2px 4px rgba(0,0,0,.05);
+}
+
+/* Dashboard specific styles */
+.quick-actions .btn {
+    padding: 1rem;
+    font-size: 1.1rem;
+}
+
+/* Status badge colors */
+.badge.bg-pending {
+    background-color: #ffc107;
+}
+
+.badge.bg-approved {
+    background-color: #28a745;
+}
+
+.badge.bg-rejected {
+    background-color: #dc3545;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .quick-actions .btn {
+        margin-bottom: 0.5rem;
+    }
+} 
