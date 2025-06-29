@@ -1,0 +1,312 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - ERP System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        background: #ffffff;
+        height: 100%;
+        min-height: 200px;
+    }
+    
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-header {
+        border-radius: 15px 15px 0 0 !important;
+        border-bottom: none;
+    }
+
+    .card-header.projects {
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    }
+
+    .card-header.tasks {
+        background: linear-gradient(135deg, #36b9cc 0%, #1a8997 100%);
+    }
+
+    .card-header.expenses {
+        background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%);
+    }
+
+    .quick-action-btn {
+        border-radius: 10px;
+        padding: 1rem;
+        transition: all 0.3s;
+        border: none;
+        font-weight: 500;
+    }
+
+    .quick-action-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .quick-action-btn i {
+        margin-right: 8px;
+    }
+
+    .status-badge {
+        padding: 0.35em 0.65em;
+        border-radius: 6px;
+        font-size: 0.75em;
+        font-weight: 600;
+    }
+
+    .priority-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+    }
+
+    .priority-high { background-color: #e74a3b; }
+    .priority-medium { background-color: #f6c23e; }
+    .priority-low { background-color: #1cc88a; }
+
+    .expense-amount {
+        font-weight: 600;
+        color: #2e59d9;
+    }
+
+    .list-group-item {
+        border: none;
+        border-bottom: 1px solid rgba(0,0,0,.05);
+        padding: 1rem;
+    }
+
+    .list-group-item:last-child {
+        border-bottom: none;
+    }
+
+    .welcome-section {
+        background: linear-gradient(135deg, #f8f9fc 0%, #e9ecef 100%);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .welcome-card {
+        background: linear-gradient(135deg, #4e73df, #224abe);
+        color: white;
+        margin-bottom: 2rem;
+    }
+
+    .welcome-card .text-muted {
+        color: rgba(255, 255, 255, 0.8) !important;
+    }
+
+    .quick-actions .btn {
+        padding: 0.8rem 1.5rem;
+        font-weight: 500;
+        border-radius: 10px;
+    }
+
+    .list-group-item {
+        border: none;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        border-radius: 8px !important;
+        transition: all 0.3s ease;
+    }
+
+    .list-group-item:hover {
+        background-color: var(--light-bg);
+        transform: translateX(5px);
+    }
+
+    .badge {
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        border-radius: 6px;
+    }
+
+    .card-title {
+        font-weight: 600;
+    }
+
+    .card-title i {
+        margin-right: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .quick-actions {
+            margin-top: 1rem;
+            text-align: left;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card welcome-card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="display-4 mb-3">Welcome back, {{ user.get_full_name|default:user.username }}!</h1>
+                        <p class="lead text-muted" id="datetime"></p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="quick-actions">
+                            <a href="{% url 'erp_core:project_create' %}" class="btn btn-primary me-2">
+                                <i class="fas fa-plus"></i> New Project
+                            </a>
+                            <a href="{% url 'erp_core:task_create' %}" class="btn btn-success">
+                                <i class="fas fa-tasks"></i> New Task
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Projects Card -->
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-project-diagram text-primary"></i> Recent Projects
+                </h5>
+                <a href="{% url 'erp_core:project_list' %}" class="btn btn-sm btn-outline-primary">
+                    View All
+                </a>
+            </div>
+            <div class="card-body">
+                {% if projects %}
+                    <div class="list-group list-group-flush">
+                        {% for project in projects %}
+                            <a href="{% url 'erp_core:project_detail' project.pk %}" 
+                               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ project.name }}</h6>
+                                    <small class="text-muted">Due: {{ project.end_date|date:"M d, Y" }}</small>
+                                </div>
+                                <span class="badge bg-{{ project.get_status_color }}">
+                                    {{ project.status }}
+                                </span>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center my-4">No active projects</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Tasks Card -->
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-tasks text-success"></i> My Tasks
+                </h5>
+                <a href="{% url 'erp_core:task_list' %}" class="btn btn-sm btn-outline-success">
+                    View All
+                </a>
+            </div>
+            <div class="card-body">
+                {% if tasks %}
+                    <div class="list-group list-group-flush">
+                        {% for task in tasks %}
+                            <a href="{% url 'erp_core:task_detail' task.pk %}" 
+                               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ task.title }}</h6>
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar-alt"></i> Due: {{ task.due_date|date:"M d, Y" }}
+                                    </small>
+                                </div>
+                                <span class="badge bg-{{ task.get_priority_color }}">
+                                    {{ task.priority }}
+                                </span>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center my-4">No pending tasks</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Expenses Card -->
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-money-bill-wave text-warning"></i> Recent Expenses
+                </h5>
+                <a href="{% url 'erp_core:expense_list' %}" class="btn btn-sm btn-outline-warning">
+                    View All
+                </a>
+            </div>
+            <div class="card-body">
+                {% if expenses %}
+                    <div class="list-group list-group-flush">
+                        {% for expense in expenses %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ expense.description }}</h6>
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar-alt"></i> {{ expense.date|date:"M d, Y" }}
+                                    </small>
+                                </div>
+                                <span class="badge bg-warning text-dark">
+                                    ${{ expense.amount }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center my-4">No recent expenses</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Update datetime
+    function updateDateTime() {
+        const now = new Date();
+        const options = { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        };
+        document.getElementById('datetime').textContent = now.toLocaleDateString('en-US', options);
+    }
+    
+    updateDateTime();
+    setInterval(updateDateTime, 60000);
+
+    // Add animations
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.card');
+        cards.forEach((card, index) => {
+            card.style.animation = `fadeIn 0.5s ease-out ${index * 0.1}s forwards`;
+            card.style.opacity = '0';
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %} 

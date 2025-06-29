@@ -1,0 +1,381 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Fashion ERP Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: #1a1c23;
+        color: #e2e8f0;
+    }
+
+    .card {
+        background: #2d3748;
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        transition: transform 0.2s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .welcome-card {
+        background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+    }
+
+    .sales-card {
+        background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+    }
+
+    .inventory-card {
+        background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    }
+
+    .card-header {
+        background: transparent;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+
+    .product-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 1rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .product-card:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .progress {
+        height: 8px;
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .progress-bar {
+        border-radius: 4px;
+    }
+
+    .stat-card {
+        padding: 1.5rem;
+        border-radius: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+
+    .stat-icon i {
+        font-size: 1.5rem;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card welcome-card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="display-4 mb-3 text-white">Fashion ERP Dashboard</h1>
+                            <p class="lead text-light mb-0">Real-time analytics and inventory management</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <button class="btn btn-light btn-lg rounded-pill">
+                                <i class="fas fa-plus-circle me-2"></i>New Order
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card sales-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="stat-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <span class="badge bg-success rounded-pill">+15.8%</span>
+                    </div>
+                    <h3 class="text-white mb-1">$24,750</h3>
+                    <p class="text-light mb-0">Today's Sales</p>
+                    <div class="sparkline mt-3" id="todaySales"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card sales-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="stat-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <span class="badge bg-success rounded-pill">+12.3%</span>
+                    </div>
+                    <h3 class="text-white mb-1">847</h3>
+                    <p class="text-light mb-0">Orders Today</p>
+                    <div class="sparkline mt-3" id="orderCount"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card sales-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <span class="badge bg-success rounded-pill">+5.2%</span>
+                    </div>
+                    <h3 class="text-white mb-1">1,284</h3>
+                    <p class="text-light mb-0">New Customers</p>
+                    <div class="sparkline mt-3" id="customerCount"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card inventory-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="stat-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <span class="badge bg-warning rounded-pill">12 Low Stock</span>
+                    </div>
+                    <h3 class="text-white mb-1">5,842</h3>
+                    <p class="text-light mb-0">Items in Stock</p>
+                    <div class="progress mt-3 bg-dark">
+                        <div class="progress-bar bg-success" style="width: 78%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <div class="col-xl-8">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0 text-white">Sales Analytics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0 text-white">Category Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Best Sellers and Inventory -->
+    <div class="row">
+        <div class="col-xl-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0 text-white">Best Selling Products</h5>
+                    <button class="btn btn-sm btn-outline-light rounded-pill">View All</button>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="bestSellersChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0 text-white">Low Stock Alerts</h5>
+                    <button class="btn btn-sm btn-outline-light rounded-pill">View All</button>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-exclamation-circle fa-2x me-3"></i>
+                            <div>
+                                <h6 class="alert-heading mb-1">Premium Denim Jeans</h6>
+                                <p class="mb-0">Only 8 items left in stock (Size M, L)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-warning mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-exclamation-circle fa-2x me-3"></i>
+                            <div>
+                                <h6 class="alert-heading mb-1">Summer Collection T-Shirts</h6>
+                                <p class="mb-0">Only 5 items left in stock (Size S)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-danger mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-times-circle fa-2x me-3"></i>
+                            <div>
+                                <h6 class="alert-heading mb-1">Designer Leather Jackets</h6>
+                                <p class="mb-0">Out of stock - Reorder required</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Sales Chart
+    const salesCtx = document.getElementById('salesChart').getContext('2d');
+    new Chart(salesCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+                label: 'Monthly Sales',
+                data: [65000, 59000, 80000, 81000, 86000, 95000, 89000, 96000, 98000, 92000, 95000, 98000],
+                borderColor: '#3b82f6',
+                tension: 0.4,
+                fill: true,
+                backgroundColor: 'rgba(59, 130, 246, 0.1)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#e2e8f0'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#e2e8f0'
+                    }
+                }
+            }
+        }
+    });
+
+    // Category Distribution Chart
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(categoryCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Men\'s Wear', 'Women\'s Wear', 'Kids\' Wear', 'Accessories'],
+            datasets: [{
+                data: [35, 40, 15, 10],
+                backgroundColor: ['#3b82f6', '#ec4899', '#10b981', '#f59e0b']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#e2e8f0'
+                    }
+                }
+            }
+        }
+    });
+
+    // Best Sellers Chart
+    const bestSellersCtx = document.getElementById('bestSellersChart').getContext('2d');
+    new Chart(bestSellersCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Premium Jeans', 'Designer Shirts', 'Summer Dresses', 'Leather Jackets', 'Casual T-Shirts'],
+            datasets: [{
+                label: 'Units Sold',
+                data: [452, 378, 325, 290, 262],
+                backgroundColor: '#4f46e5'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#e2e8f0'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#e2e8f0'
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %} 

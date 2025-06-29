@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Expenses - ERP System{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+            <i class="fas fa-money-bill-wave me-2"></i>Expenses
+        </h2>
+        <a href="{% url 'erp_core:expense_create' %}" class="btn btn-sm btn-warning btn-succcess btn lg rounded-pill px-3 shadow-sm">
+            <i class="fas fa-plus me-1"></i>Create Expense
+        </a>
+    </div>
+
+    {% if expenses %}
+    <div class="row">
+        {% for expense in expenses %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 project-card border-0 shadow-lg hover-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title mb-0 text-white">
+                            <a href="{% url 'erp_core:expense_detail' expense.id %}" class="text-decoration-none text-white">
+                                {{ expense.submitted_by.user.get_full_name }}
+                            </a>
+                        </h5>
+                        <span class="badge bg-{{ expense.get_status_color }} rounded-pill px-3 text-uppercase">
+                            {{ expense.status }}
+                        </span>
+                    </div>
+
+                    <p class="card-text text-light mb-3">{{ expense.description|truncatechars:100 }}</p>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-light">
+                            <i class="fas fa-calendar-alt text-white me-1"></i> {{ expense.date|date:"M d, Y" }}
+                        </small>
+                        <span class="text-warning fw-bold">
+                            ${{ expense.amount|floatformat:2 }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card-footer border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-light">
+                            <i class="fas fa-briefcase text-white me-1"></i> {{ expense.project.name }}
+                        </small>
+                        <a href="{% url 'erp_core:expense_detail' expense.id %}" class="btn btn-light btn-sm rounded-pill px-3">
+                            View Details <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center my-5">
+        <i class="fas fa-money-bill-wave fa-4x text-muted mb-3"></i>
+        <h3 class="text-muted">No expenses found</h3>
+        <p class="text-secondary">Create your first expense to get started</p>
+        <a href="{% url 'erp_core:expense_create' %}" class="btn btn-warning rounded-pill px-4 shadow-sm">
+            <i class="fas fa-plus me-2"></i>Create First Expense
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .project-card {
+        background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+        transition: all 0.3s ease;
+    }
+    
+    .hover-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-warning {
+        background: linear-gradient(45deg, #eab308, #fbbf24) !important;
+        border: none !important;
+        transition: all 0.3s ease !important;
+        color: #1e293b !important;
+    }
+
+    .btn-warning:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4) !important;
+    }
+
+    .btn-outline-warning {
+        border-color: #eab308 !important;
+        color: #eab308 !important;
+    }
+
+    .btn-outline-warning:hover {
+        background: linear-gradient(45deg, #eab308, #fbbf24) !important;
+        color: #1e293b !important;
+    }
+
+    .badge {
+        font-weight: 500 !important;
+    }
+
+    .card {
+        transition: all 0.3s ease !important;
+    }
+
+    .card:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+    }
+</style>
+{% endblock %}
